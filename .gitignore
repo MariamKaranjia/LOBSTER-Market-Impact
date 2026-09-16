@@ -216,3 +216,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# LOBSTER licensed market data - do not upload to GitHub
+data/
