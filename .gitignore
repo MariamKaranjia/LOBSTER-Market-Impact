@@ -218,3 +218,13 @@ __marimo__/
 .streamlit/secrets.toml
 # LOBSTER licensed market data - do not upload to GitHub
 data/
+# Licensed LOBSTER data — keep local
+data/
+*_message_0.csv
+
+# Python-generated files
+__pycache__/
+*.pyc
+
+# macOS files
+.DS_Store
