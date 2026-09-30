@@ -56,6 +56,7 @@ def process_day(file_path):
     # Execution totals for each minute.
     execution_notional = defaultdict(float)
     execution_volume = defaultdict(int)
+    execution_signed_volume = defaultdict(int)
 
     snapshots = []
 
@@ -122,6 +123,7 @@ def process_day(file_path):
                 else np.nan,
                 "avg_transaction_price": avg_transaction_price,
                 "executed_volume": volume,
+                "signed_volume": execution_signed_volume.get(minute_index, 0),
             }
         )
 
@@ -191,6 +193,7 @@ def process_day(file_path):
             and quantity > 0
         ):
             execution_volume[minute_index] += quantity
+            execution_signed_volume[minute_index] += -direction * quantity
 
             # LOBSTER prices are stored in units of 1/10000 USD.
             execution_notional[minute_index] += (
@@ -211,6 +214,7 @@ def process_day(file_path):
             save_snapshot(minute_index)
 
     result = pd.DataFrame(snapshots)
+    
 
     return result
 
