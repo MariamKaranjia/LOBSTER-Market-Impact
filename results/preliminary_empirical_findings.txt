@@ -1,0 +1,30 @@
+
+PRELIMINARY EMPIRICAL FINDINGS
+
+The analysis examines the relationship between trade-flow
+imbalance and subsequent short-horizon returns across
+eight equities using minute-level observations.
+
+The estimated market-impact coefficients range from
+1.4590 to 3.5093 basis points.
+All coefficients are positive: True.
+
+Statistical inference using Newey-West HAC standard
+errors indicates that all eight coefficients are
+significant at the 5% level: True.
+
+The regression R-squared values range from
+0.0153 to 0.0431, suggesting that
+trade-flow imbalance explains a limited proportion
+of short-horizon return variation.
+
+Out-of-sample directional prediction accuracy ranges
+from 56.28% to 60.69%.
+The average improvement over the majority-class
+baseline is 7.46 percentage points.
+
+These findings provide preliminary evidence of a
+positive association between trade-flow imbalance
+and subsequent returns. Further robustness analysis
+and methodological review are required before making
+stronger claims about market impact.

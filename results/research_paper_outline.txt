@@ -1,0 +1,56 @@
+
+WORKING TITLE
+Trade-Flow Imbalance and Short-Horizon Market Impact:
+Evidence from High-Frequency Equity Data
+
+1. INTRODUCTION
+- Motivation: understanding how trading activity relates
+  to short-horizon price movements.
+- Research question: Does normalized trade-flow imbalance
+  predict subsequent equity returns?
+- Contribution: empirical comparison across eight stocks,
+  multiple return horizons, and out-of-sample prediction.
+
+2. LITERATURE REVIEW
+- Kyle (1985): market depth and price impact.
+- Cont, Kukanov, and Stoikov (2014): order-flow imbalance.
+- Almgren and Chriss (2000): optimal execution.
+- Empirical research on transient and persistent impact.
+
+3. DATA AND METHODOLOGY
+- LOBSTER-derived high-frequency equity observations.
+- Eight stocks: AXP, BA, CAT, CSCO, CVX, GS, MMM, VZ.
+- Minute-level aggregation.
+- Signed trading volume and normalized imbalance.
+- Next-minute returns measured in basis points.
+- OLS regression with Newey-West HAC inference.
+- Multi-horizon analysis: 1, 2, 5, and 10 minutes.
+- Chronological out-of-sample directional evaluation.
+
+4. EMPIRICAL RESULTS
+- Positive estimated imbalance coefficients.
+- HAC significance across all eight stocks.
+- Modest explanatory power.
+- Directional accuracy above majority-class baseline.
+- Cross-stock differences and horizon sensitivity.
+
+5. ROBUSTNESS AND LIMITATIONS
+- Outlier sensitivity.
+- Alternative HAC lag lengths.
+- Trading-session boundary validation.
+- Potential omitted variables and endogeneity.
+- Distinction between trade-flow and order-book imbalance.
+- Need to validate the precise return horizon definitions.
+
+6. CONCLUSION
+- Summary of preliminary predictive relationships.
+- Implications for short-horizon price-impact modeling.
+- Future work: event-level order impact and
+  additional stocks.
+
+DECISIONS FOR PROFESSOR BALCH
+1. Is minute-level trade-flow imbalance an appropriate
+   primary focus for the November manuscript?
+2. Should event-level order impact be the main contribution?
+3. Which benchmarks and robustness checks are essential?
+4. Which publication venue should we target?
