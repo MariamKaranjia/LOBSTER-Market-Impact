@@ -1,162 +1,124 @@
+# LOBSTER Market Impact Research
 
-## Author
+## Project Overview
 
-**Mariam Karanjia**  
-Master of Finance, Emory University – Goizueta Business School
-# LOBSTER Market Impact Analysis
+This project investigates the relationship between order flow imbalance and short-term stock price movements using high-frequency limit order book data from LOBSTER.
 
-Market microstructure and market impact analysis using LOBSTER limit order book data.
+The research focuses on reconstructing order book information, processing high-frequency trading activity into minute-level observations, and estimating the relationship between signed trading activity and next-minute returns.
 
-This repository contains a reusable Python pipeline for reconstructing the limit order book, processing high-frequency LOBSTER message data, measuring trade-flow imbalance, and analyzing short-horizon market impact across multiple securities.
+**Research Supervisor:** Professor Tucker Balch  
+**Institution:** Emory University, Goizueta Business School
 
-## Current Analysis
+## Dataset
 
-The current implementation processes eight securities:
+- **Source:** LOBSTER high-frequency market data
+- **Period:** June 30, 2025 – June 30, 2026
+- **Coverage:** 252 trading days per stock
+- **Frequency:** One-minute observations
+- **Trading session:** 390 minutes per day
+- **Processed observations:** 98,280 per stock
+- **Stocks analyzed:** 12
 
-- American Express (AXP)
-- Boeing (BA)
-- Caterpillar (CAT)
-- Cisco Systems (CSCO)
-- Chevron (CVX)
-- Goldman Sachs (GS)
-- 3M (MMM)
-- Verizon (VZ)
+### Stock Universe
 
-### Sample
-
-- **Sample period:** June 30, 2025 – June 30, 2026
-- **Trading days:** 252 per security
-- **Frequency:** Minute-level
-- **Regular trading session:** 9:30 AM – 4:00 PM
-- **Minute observations:** 98,280 per security
-
-The pipeline processes each security independently and produces a standardized minute-level dataset for subsequent market-impact analysis.
+| Ticker | Company |
+|---|---|
+| AXP | American Express |
+| BA | Boeing |
+| CAT | Caterpillar |
+| CRM | Salesforce |
+| CSCO | Cisco Systems |
+| CVX | Chevron |
+| GS | Goldman Sachs |
+| HD | Home Depot |
+| HON | Honeywell |
+| IBM | IBM |
+| MMM | 3M |
+| VZ | Verizon |
 
 ## Methodology
 
-### 1. LOBSTER Message Processing
+### 1. Data Processing
 
-Raw LOBSTER message files are loaded and processed chronologically.
+The Python processing pipeline:
 
-The pipeline handles the primary LOBSTER event types required for reconstructing the visible limit order book, including:
+- Reads daily LOBSTER message files.
+- Reconstructs the visible limit order book.
+- Extracts best bid and best ask prices.
+- Calculates executed trading volume and signed volume.
+- Aggregates trading activity into one-minute intervals.
+- Constructs normalized trade-flow imbalance and return variables.
 
-- New limit orders
-- Partial cancellations
-- Order deletions
-- Visible executions
-- Hidden executions
+### 2. Market Impact Regression
 
-Active orders are tracked by order ID throughout each trading day.
+The primary regression examines the relationship between normalized trade-flow imbalance and next-minute returns:
 
-### 2. Order Book Reconstruction
+**Next-Minute Return (bps) = α + β × Normalized Trade-Flow Imbalance + ε**
 
-The active limit order book is reconstructed from the LOBSTER message stream.
+The coefficient β measures the estimated association between trading imbalance and subsequent short-term price movements.
 
-For each minute, the pipeline records:
+### 3. Robustness Analysis
 
-- **Best bid:** highest active bid price
-- **Best ask:** lowest active ask price
-- **Average transaction price**
-- **Executed volume**
+Robustness checks include:
 
-This produces a consistent minute-level representation of market conditions.
+- Newey–West heteroskedasticity and autocorrelation-consistent (HAC) standard errors.
+- Outlier-trimmed regressions excluding the most extreme 1% of returns.
+- Comparison of original and trimmed coefficients across all 12 stocks.
 
-### 3. Trade Direction
+## Research Results
 
-LOBSTER's `direction` field identifies the side of the resting limit order.
+All 12 analyzed stocks exhibit positive estimated market-impact coefficients.
 
-For execution events, the aggressor direction is therefore the opposite side of the resting order.
+| Ticker | Coefficient (bps) |
+|---|---:|
+| CSCO | 3.5093 |
+| CRM | 2.8613 |
+| CVX | 2.4085 |
+| BA | 2.3373 |
+| IBM | 2.3057 |
+| VZ | 2.2019 |
+| CAT | 2.0013 |
+| GS | 1.8619 |
+| HD | 1.6677 |
+| HON | 1.6257 |
+| AXP | 1.5885 |
+| MMM | 1.4590 |
 
-The pipeline uses:
+### Key Findings
 
-`aggressor_sign = -direction`
+1. All 12 original regression coefficients are positive and statistically significant at the 5% level.
+2. All 12 coefficients remain positive after outlier trimming.
+3. Estimated coefficients decrease after trimming, suggesting that extreme returns contribute to measured impact magnitude.
+4. The explanatory power of individual regressions is relatively modest, with R-squared values of approximately 1.5%–4.3%.
 
-Signed execution volume is then calculated as:
-
-`signed_volume = aggressor_sign × executed_quantity`
-
-Positive signed volume represents buyer-initiated trading, while negative signed volume represents seller-initiated trading.
-
-### 4. Trade-Flow Imbalance
-
-Minute-level normalized trade-flow imbalance is calculated as:
-
-`trade_flow_imbalance = signed_volume / executed_volume`
-
-The measure is bounded between **-1 and +1**:
-
-- Values near **+1** indicate predominantly buyer-initiated execution volume.
-- Values near **-1** indicate predominantly seller-initiated execution volume.
-- Values near **0** indicate relatively balanced executed flow.
-
-This is an **execution-based trade-flow imbalance measure**, rather than a full depth-based order-book imbalance measure.
-
-### 5. Market Impact
-
-Minute-level transaction prices are used to calculate price changes.
-
-The analysis examines whether trade-flow imbalance in one minute is associated with the subsequent minute's price movement.
-
-This provides a framework for estimating short-horizon market impact across securities.
-
-## Data Validation
-
-The final processed datasets were checked for consistency across all eight securities.
-
-Each security contains:
-
-- **98,280 minute observations**
-- Complete signed-volume calculations
-- Trade-flow imbalance bounded between **-1 and +1**
-- 252 successfully processed trading days
-
-The corrected mean trade-flow imbalance is negative across all eight securities in the current sample, indicating that seller-initiated executed volume exceeds buyer-initiated executed volume on average under this execution-based measure.
+These results establish a consistent positive relationship between normalized trading imbalance and next-minute returns across the analyzed stocks. They do not, by themselves, establish causality.
 
 ## Repository Structure
 
-### `src/`
+```text
+LOBSTER-Market-Impact/
+├── notebooks/
+│   ├── 01_data_exploration.ipynb
+│   └── 02_batch2_processing.ipynb
+├── src/
+│   └── lobster_pipeline.py
+├── results/
+│   ├── 12_stock_research_summary.csv
+│   ├── 12_stock_robustness_comparison.png
+│   ├── all_12_market_impact_results.csv
+│   └── all_12_market_impact_comparison.png
+└── README.md
+```
 
-Contains the reusable processing pipeline.
+Additional regression tables and robustness outputs are available in the `results/` directory.
 
-`lobster_pipeline.py` reconstructs the active order book and converts daily LOBSTER message files into standardized minute-level datasets.
+## Data Availability
 
-### `notebooks/`
+Raw LOBSTER data is proprietary and is not included in this public repository. Access to the original data requires appropriate authorization and licensing.
 
-Contains exploratory analysis, validation, market-impact analysis, and visualization code.
+## Future Research
 
-### `results/`
-
-Contains generated figures and processed analysis outputs organized by security.
-
-### `data/`
-
-Contains the local raw LOBSTER files used by the pipeline.
-
-Raw LOBSTER data are excluded from GitHub because the underlying dataset is licensed.
-
-## Data
-
-The analysis uses **LOBSTER (Limit Order Book System – The Efficient Reconstructor)** message data.
-
-The raw LOBSTER files are not distributed with this repository.
-
-The processing pipeline is designed to operate on locally stored LOBSTER message files while keeping the licensed source data outside version control.
-
-## Current Progress
-
-The project began with a single-day implementation for Coca-Cola (KO) to validate the order-book reconstruction and market-impact methodology.
-
-The workflow was subsequently converted into a reusable Python pipeline and extended to a one-year sample of eight securities.
-
-The current pipeline:
-
-1. Reads daily LOBSTER message files.
-2. Reconstructs the active visible limit order book.
-3. Extracts minute-level best bid and best ask.
-4. Aggregates execution volume and transaction prices.
-5. Determines aggressor-side signed volume.
-6. Calculates normalized trade-flow imbalance.
-7. Produces standardized security-level datasets.
-8. Supports next-minute market-impact analysis.
-
-The resulting framework can be extended to additional securities and used for cross-sectional analysis of liquidity, order flow, and market impact.
+- Extend the analysis to additional Dow Jones constituents.
+- Examine nonlinear relationships between order flow and returns.
+- Compare market impact across stocks with different liquidity characteristics.
+- Evaluate predictive performance and alternative model specifications.
